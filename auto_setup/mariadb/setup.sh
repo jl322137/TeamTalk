@@ -4,22 +4,20 @@
 # date: 08/30/2014
 
 # setup mysql
+MARIADB_SHARED=MariaDB-10.0.17-centos7-x86_64-shared
+MARIADB_SHARED_DOWNLOAD_PATH=https://downloads.mariadb.com/MariaDB/mariadb-10.0.17/yum/centos7-amd64/rpms/$MARIADB_SHARED.rpm
 
-MARIADB_SHARED=MariaDB-10.0.17-centos6-x86_64-shared
-MARIADB_SHARED_DOWNLOAD_PATH=http://sfo1.mirrors.digitalocean.com/mariadb/mariadb-10.0.17/yum/centos6-amd64/rpms/$MARIADB_SHARED.rpm
+MARIADB_CLIENT=MariaDB-10.0.17-centos7-x86_64-client
+MARIADB_CLIENT_DOWNLOAD_PATH=https://downloads.mariadb.com/MariaDB/mariadb-10.0.17/yum/centos7-amd64/rpms/$MARIADB_CLIENT.rpm
 
-MARIADB_CLIENT=MariaDB-10.0.17-centos6-x86_64-client
-MARIADB_CLIENT_DOWNLOAD_PATH=http://sfo1.mirrors.digitalocean.com/mariadb/mariadb-10.0.17/yum/centos6-amd64/rpms/$MARIADB_CLIENT.rpm
+MARIADB_SERVER=MariaDB-10.0.17-centos7-x86_64-server
+MARIADB_SERVER_DOWNLOAD_PATH=https://downloads.mariadb.com/MariaDB/mariadb-10.0.17/yum/centos7-amd64/rpms/$MARIADB_SERVER.rpm
 
+MARIADB_COMMON=MariaDB-10.0.17-centos7-x86_64-common
+MARIADB_COMMON_DOWNLOAD_PATH=https://downloads.mariadb.com/MariaDB/mariadb-10.0.17/yum/centos7-amd64/rpms/$MARIADB_COMMON.rpm
 
-MARIADB_SERVER=MariaDB-10.0.17-centos6-x86_64-server
-MARIADB_SERVER_DOWNLOAD_PATH=http://sfo1.mirrors.digitalocean.com/mariadb/mariadb-10.0.17/yum/centos6-amd64/rpms/$MARIADB_SERVER.rpm
-
-MARIADB_COMMON=MariaDB-10.0.17-centos6-x86_64-common
-MARIADB_COMMON_DOWNLOAD_PATH=http://sfo1.mirrors.digitalocean.com/mariadb/mariadb-10.0.17/yum/centos6-amd64/rpms/$MARIADB_COMMON.rpm
-
-MARIADB_COMPAT=MariaDB-10.0.17-centos6-x86_64-compat
-MARIADB_COMPAT_DOWNLOAD_PATH=http://sfo1.mirrors.digitalocean.com/mariadb/mariadb-10.0.17/yum/centos6-amd64/rpms/$MARIADB_COMPAT.rpm
+MARIADB_COMPAT=MariaDB-10.0.17-centos7-x86_64-compat
+MARIADB_COMPAT_DOWNLOAD_PATH=https://downloads.mariadb.com/MariaDB/mariadb-10.0.17/yum/centos7-amd64/rpms/$MARIADB_COMPAT.rpm
 
 IM_SQL=ttopen.sql
 MYSQL_CONF=my.cnf
@@ -164,7 +162,7 @@ build_mysql2() {
 
 build_mysql() {
 	clean_yum
-	yum -y install mariadb
+	yum -y install --skip-broken mariadb
 	if [ $? -eq 0 ]; then
 		echo "yum install mysql successed."
 	else
@@ -173,7 +171,7 @@ build_mysql() {
 	fi
 
 	clean_yum
-	yum -y install mariadb-server
+	yum -y install --skip-broken mariadb-server
 	if [ $? -eq 0 ]; then
 		echo "yum install mysql-server successed."
 	else
@@ -182,7 +180,7 @@ build_mysql() {
 	fi
 
 	clean_yum
-	yum -y install mariadb-devel
+	yum -y install --skip-broken mariadb-devel
 	if [ $? -eq 0 ]; then
 		echo "yum install mysql-devel successed."
 	else
@@ -191,12 +189,12 @@ build_mysql() {
 	fi
 
 
-	if [ -f /usr/share/mysql/my-huge.cnf ]; then
-		cp -f /usr/share/mysql/my-huge.cnf /etc/$MYSQL_CONF
-	else
-		echo "Error: $MYSQL_CONF is not existed";
-		return 1;
-	fi
+	# if [ -f /usr/share/mysql/my-huge.cnf ]; then
+	# 	cp -f /usr/share/mysql/my-huge.cnf /etc/$MYSQL_CONF
+	# else
+	# 	echo "Error: $MYSQL_CONF is not existed";
+	# 	return 1;
+	# fi
 }
 
 run_mysql() {
@@ -204,7 +202,7 @@ run_mysql() {
 	if [ -z "$PROCESS" ]; then 
 		echo "no mysql is running..." 
 		if [ $CENTOS_VERSION -eq 7 ]; then
-			service mariadb start
+			systemctl start mariadb
 		else
 			service mysql start
 		fi

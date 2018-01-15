@@ -1,0 +1,1 @@
+docker build -t satellite/im:latest .

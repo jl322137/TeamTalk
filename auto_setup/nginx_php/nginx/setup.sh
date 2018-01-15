@@ -73,14 +73,14 @@ install_nginx() {
   		echo "Error: yum install nginx failed";
   		exit 1;
 	fi
-	service nginx start
+	systemctl start nginx 
 	if [ $? -eq 0 ]; then
   		echo "test to start nginx successed";
 	else
   		echo "Error: test to stop nginx failed";
   		exit 1;
 	fi
-	service nginx stop
+	systemctl stop nginx
 }
 
 
